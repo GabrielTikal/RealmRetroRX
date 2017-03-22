@@ -8,7 +8,6 @@ import io.realm.RealmBaseAdapter;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
-
 public class RealmModelAdapter<T extends RealmObject> extends RealmBaseAdapter<T> {
 
     public RealmModelAdapter(Context context, RealmResults<T> realmResults, boolean automaticUpdate) {

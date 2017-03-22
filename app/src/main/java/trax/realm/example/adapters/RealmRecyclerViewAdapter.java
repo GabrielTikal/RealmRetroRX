@@ -1,6 +1,5 @@
 package trax.realm.example.adapters;
 
-
 import android.support.v7.widget.RecyclerView;
 
 import io.realm.RealmBaseAdapter;
