@@ -15,7 +15,6 @@ import android.widget.Toast;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
-
 import rx.functions.Action1;
 import trax.realm.example.R;
 import trax.realm.example.model.Question;
@@ -24,7 +23,7 @@ import trax.realm.example.model.Question;
  * Created by Gabriel on 3/20/2017.
  */
 
-public class QuestionAdapter  extends RealmRecyclerViewAdapter<Question> {
+public class QuestionAdapter extends RealmRecyclerViewAdapter<Question> {
     final Context context;
     private Realm realm;
     private LayoutInflater inflater;
@@ -68,79 +67,79 @@ public class QuestionAdapter  extends RealmRecyclerViewAdapter<Question> {
 //        }
 
         //remove single match from realm
-        holder.card.setOnLongClickListener(v-> {
+        holder.card.setOnLongClickListener(v -> {
 
-                RealmResults<Question> results = realm.where(Question.class).findAll();
+                    RealmResults<Question> results = realm.where(Question.class).findAll();
 
-                // Get the book title to show it in toast message
-                Question b = results.get(position);
-                String title = b.getTitle();
+                    // Get the book title to show it in toast message
+                    Question b = results.get(position);
+                    String title = b.getTitle();
 
-                // All changes to data must happen in a transaction
-                realm.beginTransaction();
+                    // All changes to data must happen in a transaction
+                    realm.beginTransaction();
 
-                // remove single match
-                results.remove(position);
-                realm.commitTransaction();
+                    // remove single match
+                    results.remove(position);
+                    realm.commitTransaction();
 
-                if (results.size() == 0) {
-                //    Prefs.with(context).setPreLoad(false);
+                    if (results.size() == 0) {
+                        //    Prefs.with(context).setPreLoad(false);
+                    }
+
+                    // ======================================================================================//
+                    // TODO: Gabriel: I wish this will happen with reactive by itself cause the change in table
+                    //notifyDataSetChanged();
+                    // ======================================================================================//
+
+                    Toast.makeText(context, title + " is removed from Realm", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
-
-                // ======================================================================================//
-                // TODO: Gabriel: I wish this will happen with reactive by itself cause the change in table
-                //notifyDataSetChanged();
-                // ======================================================================================//
-
-                Toast.makeText(context, title + " is removed from Realm", Toast.LENGTH_SHORT).show();
-                return false;
-            }
         );
 
         //update single match from realm
         holder.card.setOnClickListener(v -> {
 
-                inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View content = inflater.inflate(R.layout.edit_item, null);
-                final EditText editTitle = (EditText) content.findViewById(R.id.title);
-                final EditText editAuthor = (EditText) content.findViewById(R.id.author);
-                final EditText editDescription = (EditText) content.findViewById(R.id.description);
+                    inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View content = inflater.inflate(R.layout.edit_item, null);
+                    final EditText editTitle = (EditText) content.findViewById(R.id.title);
+                    final EditText editAuthor = (EditText) content.findViewById(R.id.author);
+                    final EditText editDescription = (EditText) content.findViewById(R.id.description);
 
-                editTitle.setText(question.getTitle());
+                    editTitle.setText(question.getTitle());
 //                editAuthor.setText(question.getAuthor());
-                editDescription.setText(question.getLink());
+                    editDescription.setText(question.getLink());
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setView(content)
-                        .setTitle("Edit Book")
-                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setView(content)
+                            .setTitle("Edit Book")
+                            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
 
-                                RealmResults<Question> results = realm.where(Question.class).findAll();
+                                        RealmResults<Question> results = realm.where(Question.class).findAll();
 
-                                realm.beginTransaction();
+                                        realm.beginTransaction();
 
-                                Question q = question;//results.get(position);
-                                //q.setAuthor(editAuthor.getText().toString());
-                                q.setTitle(editTitle.getText().toString());
-                                //q.setImageUrl(editThumbnail.getText().toString());
-                                q.asObservable().subscribe(new Action1<RealmObject>() {
-                                    @Override
-                                    public void call(RealmObject realmObject) {
+                                        Question q = question;//results.get(position);
+                                        //q.setAuthor(editAuthor.getText().toString());
+                                        q.setTitle(editTitle.getText().toString());
+                                        //q.setImageUrl(editThumbnail.getText().toString());
+                                        q.asObservable().subscribe(new Action1<RealmObject>() {
+                                            @Override
+                                            public void call(RealmObject realmObject) {
 
+                                            }
+                                        });
+                                        realm.commitTransaction();
+
+                                        notifyDataSetChanged();
                                     }
-                                });
-                                realm.commitTransaction();
-
-                                notifyDataSetChanged();
-                            }
-                        )
-                        .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
-                                dialog.dismiss();
-                            }
-                        );
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
+                            )
+                            .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                                        dialog.dismiss();
+                                    }
+                            );
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
         );
     }
 
